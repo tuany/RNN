@@ -27,7 +27,7 @@ class Neural_Network(object):
 	def derivadaCusto(self, x, y):
 		#Calcula a derivada em função de W1 e W2
 		self.yEstimado = self.propaga(x)
-		y = np.reshape(y, (len(y),self.tamOutput))
+		#y = np.reshape(y, (len(y),self.tamOutput))
 		#erro a ser retropropagado
 		# rever essa parte do sinal negativo
 		#print(y)
@@ -44,10 +44,10 @@ class Neural_Network(object):
 	def propaga(self, x):
 		#propaga as entradas através da estrutura da rede
 		#multiplica a matriz de entradas "x" pela de pesos "w1"
-		
-		x = np.reshape(x, (self.tamInput, len(x)))
-		#print(x) 	
-		self.z = np.dot(x.T, self.W1)
+
+		#x = np.reshape(x, (len(x),self.tamInput))
+		#print(" Esse é o formato certo do x", x, np.shape(x))
+		self.z = np.dot(x, self.W1)
 		#print(self.z) 
 		#Aplica a função de ativação para o vetor z2, a saída é da mesma dimensão que a entrada
 		self.zin = self.sigmoide(self.z)
@@ -77,4 +77,5 @@ class Neural_Network(object):
 	def computaGradientes(self, x, y):
 		dJdW1, dJdW2 = self.derivadaCusto(x, y)
 		return np.concatenate((dJdW1.ravel(), dJdW2.ravel()))
+		
 		

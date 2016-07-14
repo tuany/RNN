@@ -21,7 +21,7 @@ class Treinador(object):
 		self.J.append(self.Et)
 		numEpocas = 1
 		
-		print("ERRO TOTAL", self.Et)
+		print("ERRO TOTAL inicial", self.Et)
 		
 		while((self.Et >= self.epsilon) and (numEpocas <= self.maxIter)):
 			dJdW1, dJdW2 = self.N.derivadaCusto(x, y) # calcula os vetores gradiente 
@@ -36,8 +36,9 @@ class Treinador(object):
 			self.J.append(Et)
 			numEpocas = numEpocas + 1
 		
-		print("Saida especulada:")
+		'''print("Saida especulada:")
 		print(self.N.yEstimado)
 		print("Saida real:")
-		print(y)
-			
+		print(y)'''
+		print("ERRO total Final", Et)
+		return self.N
