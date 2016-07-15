@@ -45,11 +45,13 @@ Y = np.reshape(Y, (len(Y), tamOutput))
 #############################################
 
 TesteNN = NN.Neural_Network(tamInput, tamCamadaSaida, tamCamadaEsc)
-Ypredito = TesteNN.propaga(merv, ipsa)
+entradas = np.matrix([np.ravel(merv), np.ravel(ipsa)])
+print("Entradas: ", entradas)
+Ypredito = TesteNN.propaga(entradas)
 print("Y predito inicial: ", Ypredito)
 T = pkt.Treinador(TesteNN)
 #0.5 parece ser um bom passo
-TesteNN = T.treinar(merv, ipsa, Y, 0.9, 1000, 0.001)
+TesteNN = T.treinar(entradas, Y, 0.9, 1000, 0.001)
 Ypredito = TesteNN.propaga(valorFechamento)
 print("Y predito final: ", Ypredito)
 
