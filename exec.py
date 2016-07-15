@@ -13,7 +13,7 @@ tamCamadaEsc = 3
 tamCamadaSaida = 1
 ###########Leitura das tabelas##########
 
-f = csv.reader(open(os.getcwd()+'\IBOVESPA.csv'), delimiter=',')
+f = csv.reader(open(os.getcwd()+'\index-data\IBOVESPA.csv'), delimiter=',')
 valorFechamento = []
 for linha in f:
 	valorFechamento.append(float(linha[4]))
@@ -42,9 +42,9 @@ plt.grid(1)
 plt.show()
 
 #testando os gradientes
-grad = TesteNN.computaGradientes(valorFechamento, Y)
-numgrad = vlg.validaGradientes(TesteNN, valorFechamento, Y)
-print(grad)
-print("______")
-print(numgrad)
+# grad = TesteNN.computaGradientes(valorFechamento, Y)
+# numgrad = vlg.validaGradientes(TesteNN, valorFechamento, Y)
+# print(grad)
+# print("______")
+# print(numgrad)
 

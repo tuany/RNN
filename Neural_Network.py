@@ -41,10 +41,12 @@ class Neural_Network(object):
 		dJdW1 = np.dot(x.T, delta2)
 		return dJdW1, dJdW2
 	
-	def propaga(self, x):
+	def propaga(self, *X):
 		#propaga as entradas através da estrutura da rede
 		#multiplica a matriz de entradas "x" pela de pesos "w1"
-
+		# for i in X:
+		# 	self.z[i] = np.dot(X[i], self.W1)
+		# 	self.zin[i] = self.sigmoide(self.z[i])
 		#x = np.reshape(x, (len(x),self.tamInput))
 		#print(" Esse é o formato certo do x", x, np.shape(x))
 		self.z = np.dot(x, self.W1)

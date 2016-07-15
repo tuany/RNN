@@ -35,10 +35,14 @@ class Treinador(object):
 			self.N.setParams(vect)
 			self.J.append(Et)
 			numEpocas = numEpocas + 1
-		
-		'''print("Saida especulada:")
-		print(self.N.yEstimado)
+			print("-------------------------------")
+			print("Época: ", numEpocas)
+			print("Saida especulada:")
+			print(self.N.yEstimado)
+			print("ERRO: ", Et)
+			print("-------------------------------")
+			
 		print("Saida real:")
-		print(y)'''
+		print(y)
 		print("ERRO total Final", Et)
 		return self.N
