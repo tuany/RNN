@@ -90,3 +90,4 @@ ENV/
 
 scipy-0.18.0rc2-cp35-cp35m-win32.whl
 *.whl
+*.pdf
