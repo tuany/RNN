@@ -47,17 +47,21 @@ class Neural_Network(object):
 	def propaga(self, X):
 		# propaga as entradas através da estrutura da rede
 		# multiplica a matriz de entradas "x" pela de pesos "w1"
-	
-		# multiplica a entrada pelo peso
-		self.z = np.dot(X, self.W1)
-		# função de ativação
-		self.zin = self.sigmoide(self.z)
+		dimensoes = X.shape
+		# dimensoes[0] -> numero de entradas
+		for i in range(0, dimensoes[0]):
 
-		# multiplica a saída da camada do meio pelos pesos da ultima camada
-		self.yin = np.dot(self.zin, self.W2)
+			# multiplica a entrada pelo peso
+			self.z[i] = np.dot(X[i], self.W1)
+			# função de ativação
+			self.zin[i] = self.sigmoide(self.z[i])
+
+			# multiplica a saída da camada do meio pelos pesos da ultima camada
+			self.yin[i] = np.dot(self.zin[i], self.W2)
 		
-		# aplica a função de ativação do neuronio de saida
-		yEstimado = self.sigmoide(self.yin)
+			# aplica a função de ativação do neuronio de saida
+			yEstimado[i] = self.sigmoide(self.yin[i])
+
 		return yEstimado
 	
 	# funções auxiliares
