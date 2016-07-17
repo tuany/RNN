@@ -2,7 +2,6 @@ import numpy as np
 import Neural_Network as NN
 import matplotlib.pyplot as plt
 import PokeTrainer as pkt
-#import validaGradientes as vlg
 import csv
 import os
 
@@ -34,13 +33,12 @@ np.delete(Ytreino,0)
 np.delete(conjTeste,-1)
 np.delete(Yteste,0)
 
-Ytreino = np.reshape(Ytreino, (len(Ytreino),tamOutput))
-conjTreino = np.reshape(conjTreino, (len(conjTreino),tamInput))
-Yteste = np.reshape(Yteste, (len(Yteste),tamOutput))
-conjTeste = np.reshape(conjTeste, (len(conjTeste),tamInput))
+Ytreino = np.matrix([Ytreino])
+conjTreino = np.matrix(conjTreino)
+Yteste = np.matrix(Yteste)
+conjTeste = np.matrix(conjTeste)
 
 #################################################################
-
 TesteNN = NN.Neural_Network(tamInput, tamCamadaSaida, tamCamadaEsc)
 Ytreinopredito = TesteNN.propaga(conjTreino)
 

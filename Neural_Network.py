@@ -8,17 +8,18 @@ class Neural_Network(object):
 		
 		# Inicializando os pesos da rede: W1 - Pesos da primeira camada (entrada) / W2 - Pesos da segunda camada (Saída)
 		self.W1 = np.random.randn(self.tamInput, self.tamCamadaEsc)
+
 		self.W2 = np.random.randn(self.tamCamadaEsc, self.tamOutput)
 		# reshape
-		self.W1 = np.reshape(self.W1, (len(self.W1), self.tamCamadaEsc))
-		self.W2 = np.reshape(self.W2, (len(self.W2), self.tamOutput))
+		#self.W1 = np.reshape(self.W1, (len(self.W1), self.tamCamadaEsc))
+		#self.W2 = np.reshape(self.W2, (len(self.W2), self.tamOutput))
 
 	def sigmoide(self, z):
 		#Função de ativação - Sigmóide -
 		return 1/(1+np.exp(-z))
 		
 	def derivadaSigmoide(self, z):
-		return np.exp(-z)/((1+np.exp(-z))**2)
+		return np.exp(-z)/(np.power(1+np.exp(-z), 2))
 		
 	def funcaoCusto(self, x, y):
 		# Calcula o erro para uma entrada X e o y real
@@ -33,34 +34,41 @@ class Neural_Network(object):
 		# y = np.reshape(y, (len(y),self.tamOutput))
 		# erro a ser retropropagado
 		# rever essa parte do sinal negativo
-		# print(y)
-		# print(self.yEstimado)
-		ek = -(y-self.yEstimado)
+		ek = -np.subtract(y.T, self.yEstimado)
+		print("Erro k:")
+		print(ek.shape)
+		print(ek)
+
+		print("Derivada sigmoid YIN : ", self.derivadaSigmoide(self.yin).shape)
+		print(self.derivadaSigmoide(self.yin))
+
 		delta3 = np.multiply(ek, self.derivadaSigmoide(self.yin))
 		# Obtém o erro a ser retropropagado de cada camada, multiplicando pela derivada da função de ativação
 		dJdW2 = np.dot(self.zin.T, delta3)
-
-		delta2 = np.dot(delta3, self.W2.T)*self.derivadaSigmoide(self.z)
-		dJdW1 = np.dot(x.T, delta2)
+		print("dJdW2 ------------ ", dJdW2.shape)
+		print(dJdW2)
+		print("Z shape:", self.z.shape)
+		print(self.z)
+		print("Derivada Z shape:", self.derivadaSigmoide(self.z).shape)
+		print(self.derivadaSigmoide(self.z))
+		print("W2 shape", self.W2.shape)
+		print(self.W2)
+		delta2 = np.multiply(np.dot(delta3, self.W2.T), self.derivadaSigmoide(self.z))
+		dJdW1 = np.dot(x, delta2)
 		return dJdW1, dJdW2
 	
+	# propaga as entradas através da estrutura da rede
 	def propaga(self, X):
-		# propaga as entradas através da estrutura da rede
 		# multiplica a matriz de entradas "x" pela de pesos "w1"
-		dimensoes = X.shape
-		# dimensoes[0] -> numero de entradas
-		for i in range(0, dimensoes[0]):
+		self.z = np.dot(X.T, self.W1)
+		# função de ativação
+		self.zin = self.sigmoide(self.z)
 
-			# multiplica a entrada pelo peso
-			self.z[i] = np.dot(X[i], self.W1)
-			# função de ativação
-			self.zin[i] = self.sigmoide(self.z[i])
-
-			# multiplica a saída da camada do meio pelos pesos da ultima camada
-			self.yin[i] = np.dot(self.zin[i], self.W2)
+		# multiplica a saída da camada do meio pelos pesos da ultima camada
+		self.yin = np.dot(self.zin, self.W2)
 		
-			# aplica a função de ativação do neuronio de saida
-			yEstimado[i] = self.sigmoide(self.yin[i])
+		# aplica a função de ativação do neuronio de saida
+		yEstimado = self.sigmoide(self.yin)
 
 		return yEstimado
 	

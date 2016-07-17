@@ -2,17 +2,21 @@ import numpy as np
 import Neural_Network as NN
 import matplotlib.pyplot as plt
 import PokeTrainer as pkt
-import validaGradientes as vlg
 import csv
 import os
 
-# usando dados das bolsas da Argentina e do Chile
 ###########Parametros############
 tamOutput = 1
 tamInput = 2
-tamCamadaEsc = 3
+tamCamadaEsc = 5
 tamCamadaSaida = 1
 ###########Leitura das tabelas##########
+
+f = csv.reader(open(os.getcwd()+'\index-data\IBOVESPA.csv'), delimiter=',')
+ibovespa = []
+for linha in f:
+	ibovespa.append(float(linha[4]))
+ibovespa = ibovespa/np.amax(ibovespa, axis= 0)
 
 f = csv.reader(open(os.getcwd()+'\index-data\MERV.csv'), delimiter=',')
 merv = []
@@ -20,49 +24,44 @@ for linha in f:
 	merv.append(float(linha[4]))
 merv = merv/np.amax(merv, axis= 0)
 
-############formatação dos dados#############
-merv = np.reshape(merv, (len(merv), tamOutput))
-#############################################
-
 f = csv.reader(open(os.getcwd()+'\index-data\IPSA.csv'), delimiter=',')
 ipsa = []
 for linha in f:
 	ipsa.append(float(linha[4]))
 ipsa = ipsa/np.amax(ipsa, axis= 0)
 
-############formatação dos dados#############
-ipsa = np.reshape(ipsa, (len(ipsa), tamOutput))
-#############################################
+############# Slices em conjunto treinamento/teste ####################
+slice = round(0.66 * len(ibovespa))
 
-f = csv.reader(open(os.getcwd()+'\index-data\IBOVESPA.csv'), delimiter=',')
-Y = []
-for linha in f:
-	Y.append(float(linha[4]))
-Y = Y/np.amax(Y, axis= 0)
+conjTreino = np.matrix([merv[:slice], ipsa[:slice]])
+conjTeste = np.matrix([merv[slice:], ipsa[slice:]])
 
 ############formatação dos dados#############
-Y = np.reshape(Y, (len(Y), tamOutput))
-#############################################
+Ytreino = np.matrix([ibovespa[:slice]])
+Yteste = np.matrix([ibovespa[slice:]])
 
+np.delete(conjTreino,-1)
+np.delete(Ytreino,0)
+np.delete(conjTeste,-1)
+np.delete(Yteste,0)
+
+#################################################################
 TesteNN = NN.Neural_Network(tamInput, tamCamadaSaida, tamCamadaEsc)
-entradas = np.matrix([np.ravel(merv), np.ravel(ipsa)])
-print("Entradas: ", entradas)
-Ypredito = TesteNN.propaga(entradas)
-print("Y predito inicial: ", Ypredito)
+Ytreinopredito = TesteNN.propaga(conjTreino)
+
+print("Ytreino predito inicial: ", Ytreinopredito)
 T = pkt.Treinador(TesteNN)
 #0.5 parece ser um bom passo
-TesteNN = T.treinar(entradas, Y, 0.9, 1000, 0.001)
-Ypredito = TesteNN.propaga(valorFechamento)
-print("Y predito final: ", Ypredito)
+TesteNN = T.treinar(conjTreino, Ytreino, 0.05, 100, 0.0005)
+Ytreinopredito = TesteNN.propaga(conjTreino)
+print("Ytreino predito final: ", Ytreinopredito)
 
 plt.plot(T.J, 'r-', linewidth=2.0)
 plt.grid(1)
 plt.show()
 
-#testando os gradientes
-# grad = TesteNN.computaGradientes(valorFechamento, Y)
-# numgrad = vlg.validaGradientes(TesteNN, valorFechamento, Y)
-# print(grad)
-# print("______")
-# print(numgrad)
+#############Testando no conjunto teste#############
 
+YtestePredito = TesteNN.propaga(conjTeste)
+print("Yteste real: ", Yteste)
+print("Yteste predito final: ", YtestePredito)
