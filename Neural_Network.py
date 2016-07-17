@@ -47,11 +47,7 @@ class Neural_Network(object):
 	def propaga(self, X):
 		# propaga as entradas através da estrutura da rede
 		# multiplica a matriz de entradas "x" pela de pesos "w1"
-		print("O X está aqui: ", X)
-		print("Len(X): ", len(X))
-		
-		print("O W1 está aqui: ", self.W1)
-		print("Len(W1): ", len(self.W1))
+	
 		# multiplica a entrada pelo peso
 		self.z = np.dot(X, self.W1)
 		# função de ativação

@@ -23,26 +23,24 @@ class Treinador(object):
 		
 		print("ERRO TOTAL inicial", self.Et)
 		
-		while((self.Et >= self.epsilon) and (numEpocas <= self.maxIter)):
+		while self.Et >= self.epsilon and numEpocas < self.maxIter:
 			dJdW1, dJdW2 = self.N.derivadaCusto(x, y) # calcula os vetores gradiente 
 			delta1 = [a_i * self.alpha for a_i in dJdW1]
 			W1 = [w_i - delta_i for w_i, delta_i in zip(W1, delta1)] 
 			delta2 = [b_i * self.alpha for b_i in dJdW2]
 			W2 = [w_i - delta_i for w_i, delta_i in zip(W2, delta2)]
 			
-			Et = self.N.funcaoCusto(x,y)
+			self.Et = self.N.funcaoCusto(x,y) / len(x)
 			vect = np.concatenate((np.ravel(W1), np.ravel(W2)))
 			self.N.setParams(vect)
-			self.J.append(Et)
+			self.J.append(self.Et)
 			numEpocas = numEpocas + 1
 			print("-------------------------------")
 			print("Época: ", numEpocas)
-			print("Saida especulada:")
-			print(self.N.yEstimado)
-			print("ERRO: ", Et)
+			#print("Saida especulada:")
+			#print(self.N.yEstimado)
+			print("ERRO: ", self.Et)
 			print("-------------------------------")
 			
-		print("Saida real:")
-		print(y)
-		print("ERRO total Final", Et)
+		print("ERRO total Final", self.Et)
 		return self.N
