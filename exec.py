@@ -10,6 +10,7 @@ tamOutput = 1
 tamInput = 1
 tamCamadaEsc = 3
 tamCamadaSaida = 1
+lambdaVal = 0.00001
 ###########Leitura das tabelas##########
 
 f = csv.reader(open(os.getcwd()+'\index-data\IBOVESPA.csv'), delimiter=',')
@@ -39,13 +40,13 @@ Yteste = np.matrix(Yteste)
 conjTeste = np.matrix(conjTeste)
 
 #################################################################
-TesteNN = NN.Neural_Network(tamInput, tamCamadaSaida, tamCamadaEsc)
+TesteNN = NN.Neural_Network(tamInput, tamCamadaSaida, tamCamadaEsc, lambdaVal)
 Ytreinopredito = TesteNN.propaga(conjTreino)
 
 print("Ytreino predito inicial: ", Ytreinopredito)
 T = pkt.Treinador(TesteNN)
 #0.5 parece ser um bom passo
-TesteNN = T.treinar(conjTreino, Ytreino, 0.05, 100, 0.0005)
+TesteNN = T.treinar(conjTreino, Ytreino, 0.01, 100, 0.0005)
 Ytreinopredito = TesteNN.propaga(conjTreino)
 print("Ytreino predito final: ", Ytreinopredito)
 
@@ -58,7 +59,9 @@ plt.show()
 YtestePredito = TesteNN.propaga(conjTeste)
 print("Yteste real: ", Yteste)
 print("Yteste predito final: ", YtestePredito)
-
+print("erro final: ", T.J[-1])
+YtesteErro = TesteNN.funcaoCusto(conjTeste,Yteste)
+print("Erro de teste: ", YtesteErro)
 
 #testando os gradientes
 # grad = TesteNN.computaGradientes(dadosFechamento, Ytreino)
