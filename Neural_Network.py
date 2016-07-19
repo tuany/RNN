@@ -1,11 +1,10 @@
 import numpy as np
 class Neural_Network(object):
-	def __init__(self, tamInput, tamOutput, tamCamadaEsc, lambdaVal):
+	def __init__(self, tamInput, tamOutput, tamCamadaEsc):
 		# Definindo os metaparâmetros da rede
 		self.tamInput = tamInput 
 		self.tamOutput = tamOutput
 		self.tamCamadaEsc = tamCamadaEsc
-		self.lambdaVal = lambdaVal
 		
 		# Inicializando os pesos da rede: W1 - Pesos da primeira camada (entrada) / W2 - Pesos da segunda camada (Saída)
 		self.W1 = np.random.randn(self.tamInput, self.tamCamadaEsc)
@@ -26,7 +25,7 @@ class Neural_Network(object):
 		self.yEstimado = self.propaga(x)
 		matrix_y = np.matrix(list(y.values()))
 		dif = matrix_y-self.yEstimado
-		J = ((np.sum(np.power(dif, 2))) * 0.5)/x.shape[0] + (self.lambdaVal/len(x)) * (np.sum(np.power(self.W1,2)) + np.sum(np.power(self.W2,2))) 
+		J = (np.sum(np.power(dif, 2))) * 0.5
 		return J
 		
 	def derivadaCusto(self, x, y):
@@ -45,8 +44,7 @@ class Neural_Network(object):
 
 		delta3 = np.multiply(self.ek, self.derivadaSigmoide(self.yin))
 		# Obtém o erro a ser retropropagado de cada camada, multiplicando pela derivada da função de ativação
-		#adicionando o termo de regularização no gradiente (+lambda * pesos)
-		dJdW2 = np.dot(self.zin.T, delta3) + self.lambdaVal*self.W2
+		dJdW2 = np.dot(self.zin.T, delta3)
 		print("dJdW2 ------------ ", dJdW2.shape)
 		print(dJdW2)
 		print("Z shape:", self.z.shape)
@@ -56,7 +54,7 @@ class Neural_Network(object):
 		print("W2 shape", self.W2.shape)
 		print(self.W2)
 		delta2 = np.multiply(np.dot(delta3, self.W2.T), self.derivadaSigmoide(self.z))
-		dJdW1 = np.dot(matrix_x, delta2) + self.lambdaVal*self.W1
+		dJdW1 = np.dot(matrix_x, delta2)
 		return dJdW1, dJdW2
 	
 	# propaga as entradas através da estrutura da rede
