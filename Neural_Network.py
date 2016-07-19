@@ -25,8 +25,9 @@ class Neural_Network(object):
 		# Calcula o erro para uma entrada X e o y real
 		self.yEstimado = self.propaga(x)
 		matrix_y = np.matrix(list(y.values()))
+		matrix_x = np.matrix(list(x.values()))
 		dif = matrix_y-self.yEstimado
-		J = ((np.sum(np.power(dif, 2))) * 0.5)/x.shape[0] + (self.lambdaVal/len(x)) * (np.sum(np.power(self.W1,2)) + np.sum(np.power(self.W2,2))) 
+		J = ((np.sum(np.power(dif, 2))) * 0.5)/matrix_x.shape[0] + (self.lambdaVal/len(matrix_x)) * (np.sum(np.power(self.W1,2)) + np.sum(np.power(self.W2,2))) 
 		return J
 		
 	def derivadaCusto(self, x, y):
@@ -35,15 +36,15 @@ class Neural_Network(object):
 		matrix_x = np.matrix(list(x.values()))
 		matrix_y = np.matrix(list(y.values()))
 		# erro a ser retropropagado
-		self.ek = -np.subtract(matrix_y.T, self.yEstimado)
+		ek = -np.subtract(matrix_y.T, self.yEstimado)
 		print("Erro k:")
-		print(self.ek.shape)
-		print(self.ek)
+		print(ek.shape)
+		print(ek)
 
 		print("Derivada sigmoid YIN : ", self.derivadaSigmoide(self.yin).shape)
 		print(self.derivadaSigmoide(self.yin))
 
-		delta3 = np.multiply(self.ek, self.derivadaSigmoide(self.yin))
+		delta3 = np.multiply(ek, self.derivadaSigmoide(self.yin))
 		# Obtém o erro a ser retropropagado de cada camada, multiplicando pela derivada da função de ativação
 		#adicionando o termo de regularização no gradiente (+lambda * pesos)
 		dJdW2 = np.dot(self.zin.T, delta3) + self.lambdaVal*self.W2
@@ -64,8 +65,8 @@ class Neural_Network(object):
 	def propaga(self, entradas):
 		X = np.matrix(list(entradas.values()))
 		# multiplica a matriz de entradas "x" pela de pesos "w1"	
-		print(self.bias)	
-		self.z = np.dot(X.T, self.W1) + self.bias
+		#print(self.bias)	
+		self.z = np.dot(X.T, self.W1) #+ self.bias
 		# função de ativação
 		self.zin = self.sigmoide(self.z)
 
