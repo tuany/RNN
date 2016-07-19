@@ -10,9 +10,8 @@ class Neural_Network(object):
 		self.W1 = np.random.randn(self.tamInput, self.tamCamadaEsc)
 
 		self.W2 = np.random.randn(self.tamCamadaEsc, self.tamOutput)
-		# reshape
-		#self.W1 = np.reshape(self.W1, (len(self.W1), self.tamCamadaEsc))
-		#self.W2 = np.reshape(self.W2, (len(self.W2), self.tamOutput))
+
+		self.bias = np.random.randn(self.tamCamadaEsc)
 
 	def sigmoide(self, z):
 		#Função de ativação - Sigmóide -
@@ -24,25 +23,26 @@ class Neural_Network(object):
 	def funcaoCusto(self, x, y):
 		# Calcula o erro para uma entrada X e o y real
 		self.yEstimado = self.propaga(x)
-		dif = y-self.yEstimado
+		matrix_y = np.matrix(list(y.values()))
+		dif = matrix_y-self.yEstimado
 		J = (np.sum(np.power(dif, 2))) * 0.5
 		return J
 		
 	def derivadaCusto(self, x, y):
 		# Calcula a derivada em função de W1 e W2
 		self.yEstimado = self.propaga(x)
-		# y = np.reshape(y, (len(y),self.tamOutput))
+		matrix_x = np.matrix(list(x.values()))
+		matrix_y = np.matrix(list(y.values()))
 		# erro a ser retropropagado
-		# rever essa parte do sinal negativo
-		ek = -np.subtract(y.T, self.yEstimado)
+		self.ek = -np.subtract(matrix_y.T, self.yEstimado)
 		print("Erro k:")
-		print(ek.shape)
-		print(ek)
+		print(self.ek.shape)
+		print(self.ek)
 
 		print("Derivada sigmoid YIN : ", self.derivadaSigmoide(self.yin).shape)
 		print(self.derivadaSigmoide(self.yin))
 
-		delta3 = np.multiply(ek, self.derivadaSigmoide(self.yin))
+		delta3 = np.multiply(self.ek, self.derivadaSigmoide(self.yin))
 		# Obtém o erro a ser retropropagado de cada camada, multiplicando pela derivada da função de ativação
 		dJdW2 = np.dot(self.zin.T, delta3)
 		print("dJdW2 ------------ ", dJdW2.shape)
@@ -54,13 +54,16 @@ class Neural_Network(object):
 		print("W2 shape", self.W2.shape)
 		print(self.W2)
 		delta2 = np.multiply(np.dot(delta3, self.W2.T), self.derivadaSigmoide(self.z))
-		dJdW1 = np.dot(x, delta2)
+		dJdW1 = np.dot(matrix_x, delta2)
 		return dJdW1, dJdW2
 	
 	# propaga as entradas através da estrutura da rede
-	def propaga(self, X):
-		# multiplica a matriz de entradas "x" pela de pesos "w1"
-		self.z = np.dot(X.T, self.W1)
+	# entradas é um dicionário
+	def propaga(self, entradas):
+		X = np.matrix(list(entradas.values()))
+		# multiplica a matriz de entradas "x" pela de pesos "w1"	
+		print(self.bias)	
+		self.z = np.dot(X.T, self.W1) + self.bias
 		# função de ativação
 		self.zin = self.sigmoide(self.z)
 
@@ -79,6 +82,11 @@ class Neural_Network(object):
 		# params = np.concatenate((self.W1.ravel(),self.W2.ravel()))
 		return self.W1.ravel(), self.W2.ravel()
 
+	def getBias(self):
+		return self.bias.ravel()
+	def getError(self):
+		return self.ek
+
 	def setParams(self, params):
 		# ajusta os pesos de acordo com o vetor de pesos passado
 		W1_inicio = 0
@@ -86,6 +94,9 @@ class Neural_Network(object):
 		self.W1 = np.reshape(params[W1_inicio:W1_fim], (self.tamInput, self.tamCamadaEsc))
 		W2_fim = W1_fim + self.tamCamadaEsc * self.tamOutput
 		self.W2 = np.reshape(params[W1_fim:W2_fim], (self.tamCamadaEsc, self.tamOutput))
+
+	def setBias(self, bias):
+		self.bias = bias
 
 	def computaGradientes(self, x, y):
 		dJdW1, dJdW2 = self.derivadaCusto(x, y)
