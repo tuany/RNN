@@ -18,7 +18,7 @@ class Treinador(object):
 		W1 = paramsInicial[0]
 		W2 = paramsInicial[1]
 		bias = self.N.getBias()
-		self.Et = self.N.funcaoCusto(x,y) / len(x)
+		self.Et = self.N.funcaoCusto(x,y)
 		self.J.append(self.Et)
 		numEpocas = 1
 		
@@ -31,7 +31,7 @@ class Treinador(object):
 			delta2 = [b_i * self.alpha for b_i in dJdW2]
 			W2 = [w_i - delta_i for w_i, delta_i in zip(W2, delta2)]
 			bias = bias + self.alpha * self.Et 
-			self.Et = self.N.funcaoCusto(x,y) / len(x)
+			self.Et = self.N.funcaoCusto(x,y)
 			vect = np.concatenate((np.ravel(W1), np.ravel(W2)))
 			self.N.setParams(vect)
 			self.N.setBias(bias)
