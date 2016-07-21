@@ -37,18 +37,18 @@ class Neural_Network(object):
 		matrix_y = np.matrix(list(y.values()))
 		# erro a ser retropropagado
 		ek = -np.subtract(matrix_y.T, self.yEstimado)
-		print("Erro k:")
+		'''print("Erro k:")
 		print(ek.shape)
 		print(ek)
 
 		print("Derivada sigmoid YIN : ", self.derivadaSigmoide(self.yin).shape)
 		print(self.derivadaSigmoide(self.yin))
-
+		'''
 		delta3 = np.multiply(ek, self.derivadaSigmoide(self.yin))
 		# Obtém o erro a ser retropropagado de cada camada, multiplicando pela derivada da função de ativação
 		#adicionando o termo de regularização no gradiente (+lambda * pesos)
 		dJdW2 = np.dot(self.zin.T, delta3) + self.lambdaVal*self.W2
-		print("dJdW2 ------------ ", dJdW2.shape)
+		'''print("dJdW2 ------------ ", dJdW2.shape)
 		print(dJdW2)
 		print("Z shape:", self.z.shape)
 		print(self.z)
@@ -56,6 +56,7 @@ class Neural_Network(object):
 		print(self.derivadaSigmoide(self.z))
 		print("W2 shape", self.W2.shape)
 		print(self.W2)
+		'''
 		delta2 = np.multiply(np.dot(delta3, self.W2.T), self.derivadaSigmoide(self.z))
 		dJdW1 = np.dot(matrix_x, delta2) + self.lambdaVal*self.W1
 		return dJdW1, dJdW2

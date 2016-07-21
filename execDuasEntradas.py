@@ -99,7 +99,7 @@ plt.plot(np.ravel(list(Ytreino.values())),'red', label='Ibovespa', linewidth=2)
 plt.plot(np.ravel(list(conjTreino.values())),'purple', label='Merval', linewidth=2) 
 plt.plot(np.ravel(preditoInicial),'green', label='Predito Inicial', linewidth=2)
 plt.plot(np.ravel(Ytreinopredito.T),'blue', label="Predito Final", linewidth=2) 
-plt.legend()
+plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=4, ncol=2, mode="expand", borderaxespad=0., prop={'size':10})
 plt.show()
 
 # print("Yteste real: ", Yteste)
