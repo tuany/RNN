@@ -14,6 +14,7 @@ tamInput = 1
 tamCamadaEsc = 3
 tamCamadaSaida = 1
 lambdaVal = 0.00001
+timespan = 21 # janela de previsão (24h = 1, 48h = 2, 7d = 7 e 1m = 21)
 ###########Leitura das tabelas##########
 # Jogar isso num script de tratamento dos dados
 g = csv.reader(open(os.getcwd()+'\index-data\MERV.csv'), delimiter=',')
@@ -57,16 +58,16 @@ mervOrd = sorted(merv.items())
 slice = round(0.66 * len(merv))
 
 conjTreino = collections.OrderedDict(mervOrd[:slice])
-dtInicio = list(conjTreino.keys())[0] + timedelta(days=21)
-dtFim = list(conjTreino.keys())[-1] + timedelta(days=21)
+dtInicio = list(conjTreino.keys())[0] + timedelta(days=timespan)
+dtFim = list(conjTreino.keys())[-1] + timedelta(days=timespan)
 
 # faz o shift de 24h
 Ytreino = {k: v for k, v in dadosFechamento.items() if k >= dtInicio and k <= dtFim}
 Ytreino = collections.OrderedDict(sorted(Ytreino.items()))
 
 conjTeste = collections.OrderedDict(mervOrd[slice:])
-dtInicio = list(conjTeste.keys())[0] + timedelta(days=21)
-dtFim = list(conjTeste.keys())[-1] + timedelta(days=21)
+dtInicio = list(conjTeste.keys())[0] + timedelta(days=timespan)
+dtFim = list(conjTeste.keys())[-1] + timedelta(days=timespan)
 
 # faz o shift de 24h
 Yteste = {k: v for k, v in dadosFechamento.items() if k >= dtInicio and k <= dtFim}
@@ -88,25 +89,15 @@ Ytreinopredito = TesteNN.propaga(conjTreino)
 #############Testando no conjunto teste#############
 YtestePredito = TesteNN.propaga(conjTeste)
 
-plt.axes(xlim=(0, 24))
 
-plt.plot(np.ravel(list(Ytreino.values())),'red', label='Ibovespa', linewidth=2) 
-plt.plot(np.ravel(list(conjTreino.values())),'purple', label='Merval', linewidth=2) 
-#plt.plot(np.ravel(preditoInicial),'green', label='Predito Inicial', linewidth=2)
-plt.plot(np.ravel(Ytreinopredito.T),'blue', label="Predito Final", linewidth=2) 
-plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=4, ncol=2, mode="expand", borderaxespad=0., prop={'size':10})
+fig = plt.figure()
+ax = plt.subplot(111)
+
+ax.plot(np.ravel(list(Ytreino.values())), linestyle='-', color='red', label='Ibovespa', linewidth=1) 
+ax.plot(np.ravel(list(conjTreino.values())), linestyle=':', color='purple', label='Merval', linewidth=1) 
+ax.plot(np.ravel(Ytreinopredito.T),'blue', label="Predito Final", linewidth=1) 
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+plt.title("Ibovespa Real X Predito com Timespan %(timespan)s dia(s)" % locals())
+ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 plt.show()
-
-# print("Yteste real: ", Yteste)
-# print("Yteste predito final: ", YtestePredito)
-# print("erro final: ", T.J[-1])
-# YtesteErro = TesteNN.funcaoCusto(conjTeste,Yteste)
-# print("Erro de teste: ", YtesteErro)
-
-#testando os gradientes
-# grad = TesteNN.computaGradientes(dadosFechamento, Ytreino)
-# numgrad = vlg.validaGradientes(TesteNN, dadosFechamento, Ytreino)
-# print(grad)
-# print("______")
-# print(numgrad)
-
