@@ -28,10 +28,13 @@ for linha in g:
 	merv[dia] = float(linha[4])
 
 amax = max(dadosFechamento.items(), key=operator.itemgetter(1))[1]
-dadosFechamento = {k: (v / amax) for k, v in dadosFechamento.items()}
+amin = min(dadosFechamento.items(), key=operator.itemgetter(1))[1]
 
-amax = max(merv.items(), key=operator.itemgetter(1))[1]
-merv = {k: (v / amax) for k, v in merv.items()}
+dadosFechamento = {k: ((v - amin)/(amax-amin)) for k, v in dadosFechamento.items()}
+
+amaxM = max(merv.items(), key=operator.itemgetter(1))[1]
+aminM = min(merv.items(), key=operator.itemgetter(1))[1]
+merv = {k: ((v - aminM)/(amaxM-aminM)) for k, v in merv.items()}
 
 dadosOrdenados = sorted(dadosFechamento.items())
 mervOrd = sorted(merv.items())
@@ -75,7 +78,7 @@ preditoInicial = TesteNN.propaga(conjTreino)
 
 T = pkt.Treinador(TesteNN)
 #0.5 parece ser um bom passo
-TesteNN = T.treinar(conjTreino, Ytreino, 0.56, 100, 0.00005)
+TesteNN = T.treinar(conjTreino, Ytreino, 0.1, 10000, 0.00005)
 Ytreinopredito = TesteNN.propaga(conjTreino)
 
 # plt.plot(T.J, 'r-', linewidth=2.0)

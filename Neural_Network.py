@@ -75,7 +75,7 @@ class Neural_Network(object):
 		self.yin = np.dot(self.zin, self.W2)
 		
 		# aplica a função de ativação do neuronio de saida
-		yEstimado = self.yin #self.sigmoide(self.yin)
+		yEstimado = self.yin ##self.sigmoide(self.yin)
 
 		return yEstimado
 	
