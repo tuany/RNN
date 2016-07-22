@@ -27,7 +27,7 @@ class Neural_Network(object):
 		matrix_y = np.matrix(list(y.values()))
 		matrix_x = np.matrix(list(x.values()))
 		dif = matrix_y-self.yEstimado
-		J = ((np.sum(np.power(dif, 2))) * 0.5)/matrix_x.shape[0] + (self.lambdaVal/len(matrix_x)) * (np.sum(np.power(self.W1,2)) + np.sum(np.power(self.W2,2))) 
+		J = ((np.sum(np.power(dif, 2))) * 0.5)/matrix_x.shape[0] + (self.lambdaVal/2) * (np.sum(np.power(self.W1,2)) + np.sum(np.power(self.W2,2))) 
 		return J
 		
 	def derivadaCusto(self, x, y):
@@ -75,7 +75,7 @@ class Neural_Network(object):
 		self.yin = np.dot(self.zin, self.W2)
 		
 		# aplica a função de ativação do neuronio de saida
-		yEstimado = self.sigmoide(self.yin)
+		yEstimado = self.yin #self.sigmoide(self.yin)
 
 		return yEstimado
 	

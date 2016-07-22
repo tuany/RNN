@@ -37,12 +37,12 @@ class Treinador(object):
 			#self.N.setBias(bias)
 			self.J.append(self.Et)
 			numEpocas = numEpocas + 1
-			print("-------------------------------")
+			'''print("-------------------------------")
 			print("Época: ", numEpocas)
 			#print("Saida especulada:")
 			#print(self.N.yEstimado)
 			print("ERRO: ", self.Et)
-			print("-------------------------------")
+			print("-------------------------------")'''
 			
 		print("ERRO total Final", self.Et)
 		return self.N
