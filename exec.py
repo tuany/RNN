@@ -9,55 +9,57 @@ import collections
 import operator
 
 ###########Parametros############
-tamOutput = 1
 tamInput = 1
-tamCamadaEsc = 3
+tamCamadaEsc = 2
 tamCamadaSaida = 1
 lambdaVal = 0.00001
-timespan = 21 # janela de previsão (24h = 1, 48h = 2, 7d = 7 e 1m = 21)
+timespan = 7 # janela de previsão (24h = 1, 48h = 2, 7d = 7 e 1m = 21)
+index = "NIKKEI"
 ###########Leitura das tabelas##########
 # Jogar isso num script de tratamento dos dados
-g = csv.reader(open(os.getcwd()+'\index-data\MERV.csv'), delimiter=',')
+nomeArquivo = "\index-data\%(index)s.csv" % locals()
+
+g = csv.reader(open(os.getcwd()+nomeArquivo), delimiter=',')
 f = csv.reader(open(os.getcwd()+'\index-data\IBOVESPA.csv'), delimiter=',')
 dadosFechamento = {}
-merv = {}
+entrada = {}
 for linha in f:
 	dia = datetime.strptime(linha[0], '%Y-%m-%d').date()
 	dadosFechamento[dia] = float(linha[4])
 for linha in g:
 	dia = datetime.strptime(linha[0], '%Y-%m-%d').date()
-	merv[dia] = float(linha[4])
+	entrada[dia] = float(linha[4])
 
 amax = max(dadosFechamento.items(), key=operator.itemgetter(1))[1]
 amin = min(dadosFechamento.items(), key=operator.itemgetter(1))[1]
 
 dadosFechamento = {k: ((v - amin)/(amax-amin)) for k, v in dadosFechamento.items()}
 
-amaxM = max(merv.items(), key=operator.itemgetter(1))[1]
-aminM = min(merv.items(), key=operator.itemgetter(1))[1]
-merv = {k: ((v - aminM)/(amaxM-aminM)) for k, v in merv.items()}
+amaxM = max(entrada.items(), key=operator.itemgetter(1))[1]
+aminM = min(entrada.items(), key=operator.itemgetter(1))[1]
+entrada = {k: ((v - aminM)/(amaxM-aminM)) for k, v in entrada.items()}
 
 dadosOrdenados = sorted(dadosFechamento.items())
-mervOrd = sorted(merv.items())
+entradaOrd = sorted(entrada.items())
 dadosFechamento = collections.OrderedDict(dadosOrdenados)
-merv = collections.OrderedDict(mervOrd)
-dtInicio = list(merv.keys())[0]
-dtFim = list(merv.keys())[-1]
+entrada = collections.OrderedDict(entradaOrd)
+dtInicio = list(entrada.keys())[0]
+dtFim = list(entrada.keys())[-1]
 dt = dtInicio
 fechamentoAnterior = dadosFechamento[dtInicio]
-fechamentoMerv = merv[dtInicio]
+fechamentoEntrada = list(entrada.items())[0][1]
 for days in range(int((dtFim - dtInicio).days)):
 	dadosFechamento.setdefault(dt, fechamentoAnterior)
-	merv.setdefault(dt, fechamentoMerv)
+	entrada.setdefault(dt, fechamentoEntrada)
 	fechamentoAnterior = dadosFechamento[dt]
-	fechamentoMerv = merv[dt]
+	fechamentoEntrada = entrada[dt]
 	dt = dt + timedelta(days=1)
 ############# Slices em conjunto treinamento/teste ####################
 dadosOrdenados = sorted(dadosFechamento.items())
-mervOrd = sorted(merv.items())
-slice = round(0.66 * len(merv))
+entradaOrd = sorted(entrada.items())
+slice = round(0.66 * len(entrada))
 
-conjTreino = collections.OrderedDict(mervOrd[:slice])
+conjTreino = collections.OrderedDict(entradaOrd[:slice])
 dtInicio = list(conjTreino.keys())[0] + timedelta(days=timespan)
 dtFim = list(conjTreino.keys())[-1] + timedelta(days=timespan)
 
@@ -65,7 +67,7 @@ dtFim = list(conjTreino.keys())[-1] + timedelta(days=timespan)
 Ytreino = {k: v for k, v in dadosFechamento.items() if k >= dtInicio and k <= dtFim}
 Ytreino = collections.OrderedDict(sorted(Ytreino.items()))
 
-conjTeste = collections.OrderedDict(mervOrd[slice:])
+conjTeste = collections.OrderedDict(entradaOrd[slice:])
 dtInicio = list(conjTeste.keys())[0] + timedelta(days=timespan)
 dtFim = list(conjTeste.keys())[-1] + timedelta(days=timespan)
 
@@ -94,7 +96,7 @@ fig = plt.figure()
 ax = plt.subplot(111)
 
 ax.plot(np.ravel(list(Ytreino.values())), linestyle='-', color='red', label='Ibovespa', linewidth=1) 
-ax.plot(np.ravel(list(conjTreino.values())), linestyle=':', color='purple', label='Merval', linewidth=1) 
+ax.plot(np.ravel(list(conjTreino.values())), linestyle=':', color='purple', label=index, linewidth=1) 
 ax.plot(np.ravel(Ytreinopredito.T),'blue', label="Predito Final", linewidth=1) 
 box = ax.get_position()
 ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
