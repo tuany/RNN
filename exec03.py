@@ -13,10 +13,13 @@ tamInput = 3
 tamCamadaEsc = 5
 tamCamadaSaida = 1
 lambdaVal = 0.00001
-timespan = 21 # janela de previsão (24h = 1, 48h = 2, 7d = 7 e 1m = 21)
+timespan = 1 # janela de previsão (24h = 1, 48h = 2, 7d = 7 e 1m = 21)
 index1 = "IPC"
 index2 = "EURONEXT-PARIS"
 index3 = "HANGSENG"
+taxaAprendizado = 0.1 
+epocas = 10000 
+erro = 0.00005
 ###########Leitura das tabelas##########
 nomeArquivo1 = "\index-data\%(index1)s.csv" % locals()
 nomeArquivo2 = "\index-data\%(index2)s.csv" % locals()
@@ -120,7 +123,7 @@ preditoInicial = TesteNN.propaga(conjTreino)
 
 T = pkt.Treinador(TesteNN)
 #0.5 parece ser um bom passo
-TesteNN = T.treinar(conjTreino, Ytreino, 0.1, 10000, 0.00005)
+TesteNN = T.treinar(conjTreino, Ytreino, taxaAprendizado, epocas, erro)
 Ytreinopredito = TesteNN.propaga(conjTreino)
 
 # plt.plot(T.J, 'r-', linewidth=2.0)
